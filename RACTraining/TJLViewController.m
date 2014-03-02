@@ -9,21 +9,24 @@
 #import "TJLViewController.h"
 
 @interface TJLViewController ()
-
+@property(weak, nonatomic) IBOutlet UITextField *textField;
+@property(strong, nonatomic) NSString *pikachuString;
 @end
 
 @implementation TJLViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [self.textField.rac_textSignal subscribeNext:^(NSString *text) {
+        NSLog(@"%@", text);
+    }];
+
+    RAC(self, pikachuString) = self.textField.rac_textSignal;
+
+    [RACObserve(self, pikachuString) subscribeNext:^(id x) {
+        NSLog(@"%@", x);
+    }];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 @end
