@@ -18,32 +18,73 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    /// Most signals are cold by default, that is, they do not do any work until they are subscribed to.
-    RACSignal *coldSignal = [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
-        [subscriber sendNext:@"pikachu"];
-        [subscriber sendCompleted];
-
+    /// Most signals do their work synchronously, and will deliver their results on the thread they started on
+    RACSignal *mainThreadSignal = [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
+        NSString *pikachu = @"pikachu";
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ signal block executed on main thread", pikachu);
+        }
+        else {
+            NSLog(@"%@ signal block not executed on main thread", pikachu);
+        }
+        [subscriber sendNext:pikachu];
         return nil;
     }];
 
-    /// Since this signal was subscribed to, it will execute its block and send @"pikachu" as a next event.
-    [coldSignal subscribeNext:^(NSString *value) {
-        NSLog(@"%@", value);
+    /// The signal did its work on the main thread, and delivers it work on the main thread.
+    [mainThreadSignal subscribeNext:^(id x) {
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ subscription block executed on main thread", x);
+        }
+        else {
+            NSLog(@"%@ subscription block not executed on main thread", x);
+        }
     }];
 
-    /// This signal will never perform any work since it is a cold signal that is never subscribed to.
-    RACSignal *anotherColdSignal __unused = [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
-        [subscriber sendNext:@"I am cold"];
-        [subscriber sendCompleted];
-        NSLog(@"this is a cold signal");
+    /// This signal does its work on the main thread, but will deliver its results on a background thread
+    RACSignal *backgroundThreadSignal = [[RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
+        NSString *squirtle = @"squirtle";
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ signal block executed on main thread", squirtle);
+        }
+        else {
+            NSLog(@"%@ signal block not executed on main thread", squirtle);
+        }
+        [subscriber sendNext:squirtle];
         return nil;
+    }] deliverOn:[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground]];
+
+    [backgroundThreadSignal subscribeNext:^(id x) {
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ subscription block executed on main thread", x);
+        }
+        else {
+            NSLog(@"%@ subscription block not executed on main thread", x);
+        }
     }];
 
-    /// This signal is a hot signal, which means that it will immediatly execute the given block even without any subscribers.
-    RACSignal *hotSignal __unused = [RACSignal startEagerlyWithScheduler:[RACScheduler mainThreadScheduler] block:^(id <RACSubscriber> subscriber) {
-        NSLog(@"squirtle");
+    /// This signal will do its work on a background thread.
+    RACSignal *lazySignal = [RACSignal startLazilyWithScheduler:[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground] block:^(id <RACSubscriber> subscriber) {
+        NSString *charizard = @"charizard";
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ subscription block executed on main thread", charizard);
+        }
+        else {
+            NSLog(@"%@ subscription block not executed on main thread", charizard);
+        }
+
+        [subscriber sendNext:charizard];
+    }];
+
+    /// All we have to do to receive results on the main thread is call `-deliverOn:` with the main thread scheduler.
+    [[lazySignal deliverOn:RACScheduler.mainThreadScheduler] subscribeNext:^(id x) {
+        if(NSThread.isMainThread) {
+            NSLog(@"%@ subscription block executed on main thread", x);
+        }
+        else {
+            NSLog(@"%@ subscription block not executed on main thread", x);
+        }
     }];
 }
-
 
 @end
