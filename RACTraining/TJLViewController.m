@@ -39,7 +39,7 @@
         return nil;
     }];
 
-    /// This signal is a hot signal, which means that it will immediatly execute the given block even without any subscribers.
+    /// This signal is a hot signal, which means that it will immediately execute the given block even without any subscribers.
     RACSignal *hotSignal __unused = [RACSignal startEagerlyWithScheduler:[RACScheduler mainThreadScheduler] block:^(id <RACSubscriber> subscriber) {
         NSLog(@"squirtle");
     }];
