@@ -17,14 +17,31 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.textField.rac_textSignal subscribeNext:^(NSString *text) {
-        NSLog(@"%@", text);
+
+    /// Most signals are cold by default, that is, they do not do any work until they are subscribed to.
+    RACSignal *coldSignal = [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
+        [subscriber sendNext:@"pikachu"];
+        [subscriber sendCompleted];
+
+        return nil;
     }];
 
-    RAC(self, pikachuString) = self.textField.rac_textSignal;
+    /// Since this signal was subscribed to, it will execute its block and send @"pikachu" as a next event.
+    [coldSignal subscribeNext:^(NSString *value) {
+        NSLog(@"%@", value);
+    }];
 
-    [RACObserve(self, pikachuString) subscribeNext:^(id x) {
-        NSLog(@"%@", x);
+    /// This signal will never perform any work since it is a cold signal that is never subscribed to.
+    RACSignal *anotherColdSignal __unused = [RACSignal createSignal:^RACDisposable *(id <RACSubscriber> subscriber) {
+        [subscriber sendNext:@"I am cold"];
+        [subscriber sendCompleted];
+        NSLog(@"this is a cold signal");
+        return nil;
+    }];
+
+    /// This signal is a hot signal, which means that it will immediatly execute the given block even without any subscribers.
+    RACSignal *hotSignal __unused = [RACSignal startEagerlyWithScheduler:[RACScheduler mainThreadScheduler] block:^(id <RACSubscriber> subscriber) {
+        NSLog(@"squirtle");
     }];
 }
 
