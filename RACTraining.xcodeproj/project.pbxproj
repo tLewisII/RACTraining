@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB58158918C649E300DAF937 /* GreenStar.png in Resources */ = {isa = PBXBuildFile; fileRef = DB58158518C649E300DAF937 /* GreenStar.png */; };
+		DB58158A18C649E300DAF937 /* GreenStar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DB58158618C649E300DAF937 /* GreenStar@2x.png */; };
+		DB58158B18C649E300DAF937 /* RedStar.png in Resources */ = {isa = PBXBuildFile; fileRef = DB58158718C649E300DAF937 /* RedStar.png */; };
+		DB58158C18C649E300DAF937 /* RedStar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DB58158818C649E300DAF937 /* RedStar@2x.png */; };
 		DBBABFFA18C2C2E500B133F7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBBABFF918C2C2E500B133F7 /* Foundation.framework */; };
 		DBBABFFC18C2C2E500B133F7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBBABFFB18C2C2E500B133F7 /* CoreGraphics.framework */; };
 		DBBABFFE18C2C2E500B133F7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBBABFFD18C2C2E500B133F7 /* UIKit.framework */; };
@@ -37,6 +41,10 @@
 /* Begin PBXFileReference section */
 		05C98067EC1548CB936E9AB1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		17990073222F406A9BD02B45 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB58158518C649E300DAF937 /* GreenStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GreenStar.png; sourceTree = "<group>"; };
+		DB58158618C649E300DAF937 /* GreenStar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "GreenStar@2x.png"; sourceTree = "<group>"; };
+		DB58158718C649E300DAF937 /* RedStar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedStar.png; sourceTree = "<group>"; };
+		DB58158818C649E300DAF937 /* RedStar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RedStar@2x.png"; sourceTree = "<group>"; };
 		DBBABFF618C2C2E500B133F7 /* RACTraining.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RACTraining.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBBABFF918C2C2E500B133F7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DBBABFFB18C2C2E500B133F7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -124,6 +132,10 @@
 				DBBAC00E18C2C2E500B133F7 /* TJLViewController.h */,
 				DBBAC00F18C2C2E500B133F7 /* TJLViewController.m */,
 				DBBAC01118C2C2E500B133F7 /* Images.xcassets */,
+				DB58158518C649E300DAF937 /* GreenStar.png */,
+				DB58158618C649E300DAF937 /* GreenStar@2x.png */,
+				DB58158718C649E300DAF937 /* RedStar.png */,
+				DB58158818C649E300DAF937 /* RedStar@2x.png */,
 				DBBAC00018C2C2E500B133F7 /* Supporting Files */,
 			);
 			path = RACTraining;
@@ -224,8 +236,6 @@
 			mainGroup = DBBABFED18C2C2E500B133F7;
 			productRefGroup = DBBABFF718C2C2E500B133F7 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-			);
 			projectRoot = "";
 			targets = (
 				DBBABFF518C2C2E500B133F7 /* RACTraining */,
@@ -239,9 +249,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB58158A18C649E300DAF937 /* GreenStar@2x.png in Resources */,
 				DBBAC01218C2C2E500B133F7 /* Images.xcassets in Resources */,
 				DBBAC00418C2C2E500B133F7 /* InfoPlist.strings in Resources */,
+				DB58158B18C649E300DAF937 /* RedStar.png in Resources */,
 				DBBAC00D18C2C2E500B133F7 /* Main.storyboard in Resources */,
+				DB58158918C649E300DAF937 /* GreenStar.png in Resources */,
+				DB58158C18C649E300DAF937 /* RedStar@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,6 +520,7 @@
 				DBBAC02A18C2C2E500B133F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DBBAC02B18C2C2E500B133F7 /* Build configuration list for PBXNativeTarget "RACTrainingTests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +529,7 @@
 				DBBAC02D18C2C2E500B133F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
