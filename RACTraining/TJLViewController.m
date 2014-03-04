@@ -50,25 +50,58 @@
     RAC(self.passwordIndicator, image) = [passwordSignal map:block];
 
 
-    /// Now we want to enable or disable the createAccountButton depending on the correctness of the text fields.
-    /// So what we want is some way to combine all the latest values from the text field signals and reduce them
-    /// to a BOOL that can be used to derive the enabled-ness of the button. If only there were a way to do that
-    /// with a class method on RACSignal...
+    ///Only enable the create account button when each field is filled out correctly.
+    RACSignal *correctnessSignal = [RACSignal combineLatest:@[nameSignal, emailSignal, passwordSignal]
+                                                     reduce:^(NSNumber *name, NSNumber *email, NSNumber *password) {
+                                                         return @((name.boolValue && email.boolValue && password.boolValue));
+                                                     }];
+    ///A RACCommand is used for buttons in place of adding target actions. In this case, we only want the command to be able to execute if the correctnessSignal returns true.
+    ///Here we return a signal block that executes a network request on a background thread. We send an error if there is an error, or the image and `complete` if it is successful.
+    RACCommand *command = [[RACCommand alloc] initWithEnabled:correctnessSignal signalBlock:^RACSignal *(id input) {
+        return [RACSignal startLazilyWithScheduler:[RACScheduler schedulerWithPriority:RACSchedulerPriorityBackground] block:^(id <RACSubscriber> subscriber) {
+            NSError *error;
+            NSData *data = [NSData dataWithContentsOfURL:pictureURL
+                                                 options:NSDataReadingMappedAlways
+                                                   error:&error];
+            if(error) {
+                [subscriber sendError:error];
+            }
+            else {
+                [subscriber sendNext:[UIImage imageWithData:data]];
+                [subscriber sendCompleted];
+            }
+        }];
+    }];
+
+    ///Here we handle any errors that the command sends.
+    [command.errors subscribeNext:^(NSError *x) {
+        NSLog(@"%@", x);
+    }];
+    ///We set the command to be executed whenever the button is pressed.
+    self.createAccountButton.rac_command = command;
+
+
+
+    /// We want to dismiss the keyboard whenever the button is tapped, but we don't want to do that inside the command
+    /// so we could probably use the `racSignalForControlEvents:` method that is available on UIControl to do that.
     /// Start here
 
 
 
-
-    /// You will use a RACCommand for the button. We will simply make a call to a URL which is defined
-    /// by the pictureURL macro. Use `+NSData dataWithContentsOfURL:options:error:` to get the contents of the URL
-//    RACCommand *command = [[RACCommand alloc] initWithEnabled: signalBlock:^RACSignal *(id input) {
-//       you should return a signal here.
-//    }];
+   /// We want to bind the results from the contents retrieved from the URL to the imageView
+   /// and we need to make sure those results are delivered on the main thread.
 
 
+    self.activityIndicatorView = [[UIActivityIndicatorView alloc] init];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicatorView];
+    UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    space.width = 20; //make the activity spinner offset from the edge of the nav bar
+    self.activityIndicatorView.color = [UIColor blackColor];
+    self.navigationItem.rightBarButtonItems = @[space, item];
 
-    /// End here
-    /// self.createAccountButton.rac_command =
+    /// The activity indicator should spin while the buttons command is executing, and stop when it is finished.
+    /// There are some methods on RACCommand that can help with this.
+
 
 }
 
