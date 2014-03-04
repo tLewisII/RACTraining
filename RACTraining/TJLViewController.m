@@ -10,6 +10,7 @@
 #define RedStar [UIImage imageNamed:@"RedStar"]
 
 #define pictureURL [NSURL URLWithString:@"https://farm9.staticflickr.com/8109/8631724728_48c13f7733_b.jpg"]
+
 #import "TJLViewController.h"
 
 @interface TJLViewController () <UITextFieldDelegate>
@@ -80,29 +81,36 @@
     ///We set the command to be executed whenever the button is pressed.
     self.createAccountButton.rac_command = command;
 
+    @weakify(self);
+    ///Hide the keyboard whenever the button is pressed. This would be considered a side effect.
+    [[self.createAccountButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(id x) {
+        @strongify(self)
+        [self.nameField resignFirstResponder];
+        [self.emailField resignFirstResponder];
+        [self.passwordField resignFirstResponder];
+    }];
 
-
-    /// We want to dismiss the keyboard whenever the button is tapped, but we don't want to do that inside the command
-    /// so we could probably use the `racSignalForControlEvents:` method that is available on UIControl to do that.
-    /// Start here
-
-
-
-   /// We want to bind the results from the contents retrieved from the URL to the imageView
-   /// and we need to make sure those results are delivered on the main thread.
-
-
+    ///Here we bind the imageView's image property to the signal sent from the command. We flatten it because `executionSignals` is a signal of signals,
+    /// and flattening is the same as merging, so we get one signal that represents the value of all of the signals. Note the delivery on the main thread.
+    RAC(self.imageView, image) = [[[command executionSignals] flatten] deliverOn:[RACScheduler mainThreadScheduler]];
+    ///The activityIndicator will spin while the command is being executed.
     self.activityIndicatorView = [[UIActivityIndicatorView alloc] init];
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:self.activityIndicatorView];
     UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     space.width = 20; //make the activity spinner offset from the edge of the nav bar
     self.activityIndicatorView.color = [UIColor blackColor];
     self.navigationItem.rightBarButtonItems = @[space, item];
+    ///Since we cannot set the activityIndicators animating property directly, we have to invoke its methods as side effects.
+    [command.executing subscribeNext:^(NSNumber *x) {
+        @strongify(self)
+        if(x.boolValue) [self.activityIndicatorView startAnimating];
+        else [self.activityIndicatorView stopAnimating];
+    }];
+}
 
-    /// The activity indicator should spin while the buttons command is executing, and stop when it is finished.
-    /// There are some methods on RACCommand that can help with this.
-
-
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 @end
