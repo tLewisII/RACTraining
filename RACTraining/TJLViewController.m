@@ -21,13 +21,19 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
 
+
     @weakify(self)
+
+    /// Returns a signal that will send a next event each time the given selector is invoked,
+    /// sending its arguments as a RACTuple, which is just a small container like an array.
     RACSignal *selectionSignal = [[self rac_signalForSelector:@selector(tableView:didSelectRowAtIndexPath:)] map:^id(RACTuple *value) {
         @strongify(self)
         NSIndexPath *path = value.second;
         return self.dataArray[(NSUInteger)path.row];
     }];
 
+    /// Invokes the given selector with the given signal arguments each time those signals send a value,
+    /// But only after all arguments send their first value.
     [self rac_liftSelector:@selector(performSegueWithIdentifier:sender:) withSignals:selectionSignal, [RACSignal return:nil], nil];
 }
 
